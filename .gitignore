@@ -1,0 +1,13 @@
+*.err
+*.out
+fastq/*
+*.bam
+*.bam.bai
+*.gz
+*.bw
+*.png
+*.svg
+*.csv
+*.log
+*.txt
+seq_output
