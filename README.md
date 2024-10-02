@@ -38,12 +38,11 @@ git clone https://github.com/jamwarner/chip_seq.git
 cd chip_seq
 ```
 
+Run all commands from the root `chip_seq` directory.
 
 **2. Download or transfer your .fastq.gz files into the `fastq/` directory.**
 
 **3. Align your libraries to the experimental and spike-in genomes.**
-
-Run all commands from the root `chip_seq` directory.
 
 We will submit two alignment jobs for each library: one to the experimental genome and the othe to the spike-in genome. Submitting the jobs separately allows all of the alignments to run in parallel.
 
@@ -85,7 +84,7 @@ Since the reads are paired, we can determine the size of each fragment that was 
 
 ```bash
 # use deeptools to generate summary statistics for each sorted.bam file
-sbatch scripts/bamPEFragmentSize.sh
+sbatch scripts/PEFragmentSize.sh
 ```
 
 This script will look at all of the 'sorted.bam' files and will generate two new files in the `fragment_sizes/` directory:
@@ -104,9 +103,9 @@ This step uses [samtools view](http://www.htslib.org/doc/samtools-view.html) to 
 What the script looks like under the hood:
 
 > ```bash
-> for name in /bam/*_sorted.bam; do
-> 	(basename ${name} _sorted.bam) >> /logs/experimental_counts.log
-> 	samtools view -c -F 388 ${name} >> /logs/experimental_counts.log
+> for name in bam/*_sorted.bam; do
+> 	(basename ${name} _sorted.bam) >> logs/experimental_counts.log
+> 	samtools view -c -F 388 ${name} >> logs/experimental_counts.log
 > done
 > ```
 
@@ -161,7 +160,7 @@ The rest of the script just plugs 'alpha' in as the scaling factor to `bamCovera
 > ```bash
 > bamCoverage -b ${1%} -o deeptools/si/${base}_si.bw \
 >        -bs 20 \
-> 	--scaleFactor ${alpha} \
+>	--scaleFactor ${alpha} \
 >        --extendReads \
 >        -p max \
 >        --smoothLength 60 \
@@ -208,6 +207,11 @@ for rep in rep2 rep3 rep4; do sbatch scripts/makeplots.sh $rep; done
 ```
 
 
+To transfer data:
 
+```bash
+# from a terminal session that is not logged in to O2
+scp -r <HMSID>@rc.transfer.hms.harvard.edu:/n/groups/winston/<your/file_path/here> <destination/file_path/here>
+```
 
 

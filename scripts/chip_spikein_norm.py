@@ -24,14 +24,14 @@ libraries = []
 scer_counts = []
 spom_counts =[]
 # Change seconds number in range() to equal to the number of lines in the log files.
-for i in range(0, 32, 2):
-    file = open('rep4_counts.log', 
+for i in range(0, lala, 2):
+    file = open('experimental_counts.log', 
                 mode='r')
     content = file.readlines()
     libraries.append(content[i].strip('\n'))
     scer_counts.append(int(content[i+1].strip('\n')))
     file.close()
-    file = open('rep4_spikein_counts.log', 
+    file = open('spikein_counts.log', 
                 mode='r')
     content = file.readlines()
     spom_counts.append(int(content[i+1].strip('\n')))
@@ -82,10 +82,25 @@ aligned_reads[["library", "proportion_spom", "proportion_scer"]].plot(
 
 # So normalization factor should be:
 norm = aligned_reads.loc[aligned_reads["library"].str.contains('input')]["scer_counts"] / aligned_reads.loc[aligned_reads["library"].str.contains('input')]["spom_counts"]
-aligned_reads.loc[0:3, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('93_D')]["spom_counts"]*norm[2])
-aligned_reads.loc[4:7, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('93_I')]["spom_counts"]*norm[6])
-aligned_reads.loc[8:11, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('95_D')]["spom_counts"]*norm[10])
-aligned_reads.loc[12:15, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('95_I')]["spom_counts"]*norm[14])
+
+### Old math for test case
+# aligned_reads.loc[0:3, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('93_D')]["spom_counts"]*norm[2])
+# aligned_reads.loc[4:7, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('93_I')]["spom_counts"]*norm[6])
+# aligned_reads.loc[8:11, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('95_D')]["spom_counts"]*norm[10])
+# aligned_reads.loc[12:15, 'alpha_IP'] = 1/(aligned_reads.loc[aligned_reads["library"].str.contains('95_I')]["spom_counts"]*norm[14])
+
+### To do in a for loop
+# The list to interate through is determined by the order of you libraries in the data frame.
+# You'll have to look at their indices and edit the list accordingly.
+for i in [0,1,2,12,13,14,24,25,26,36,37,38]:
+# Checks numbers
+#     print(i)
+# Checks indices in groups
+#     print(aligned_reads.loc[[i,i+3,i+6,i+9], "library"])
+    aligned_reads.loc[[i,i+3,i+6,i+9], 'alpha_IP'] = 1/(aligned_reads.loc[[i,i+3,i+6,i+9],"spom_counts"]*norm[i+6])
+
+
+
 
 # convert scintific notation into float
 for i in range(len(aligned_reads['alpha_IP'])):
@@ -98,4 +113,7 @@ aligned_reads[['library','alpha_IP_float']]
 # Run below command to export
 aligned_reads[["library", "alpha_IP_float"]].to_csv(path_or_buf='normalization_table.csv', index=False, header=False)
 
+# Test flat multiplier
+aligned_reads["alpha_IP_multiplied"] = aligned_reads['alpha_IP']*10000000
+aligned_reads[["library", "alpha_IP_multiplied"]].to_csv(path_or_buf='test_normalization_table.csv', index=False, header=False)
 
