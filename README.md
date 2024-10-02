@@ -8,7 +8,7 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 - alignment with [`bowtie2`](https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) (.bam)
 - indexing and sorting alignment files with [`samtools`](http://www.htslib.org/) (.bam and .bai)
 - summary of fragment sizes with [`deeptools PEFragmentSize`](https://deeptools.readthedocs.io/en/develop/content/tools/bamPEFragmentSize.html)
-- counting reads aligning to experimental (S. cerevisiae) and spike-in (S.pombe) genomes with [`samtools view`](http://www.htslib.org/doc/samtools-view.html)
+- counting reads aligning to experimental (*S. cerevisiae*) and spike-in (*S.pombe*) genomes with [`samtools view`](http://www.htslib.org/doc/samtools-view.html)
 - calculation of per-library spike-in normalization scaling factors using a custom python script
 - generation of coverage tracks (.bw) scaled by spike-in normalization using [`deeptools bamCoverage`](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html)
 - log2 fold enrichment of IP over input coverage (.bw) using [`deeptools bigwigCompare`](https://deeptools.readthedocs.io/en/develop/content/tools/bigwigCompare.html)
@@ -21,8 +21,8 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 - Uses slurm job scheduler to batch submit jobs
 - Paired-end FASTQ files from ChIP-seq libaries
 	- FASTQ files should be demultiplexed and can (should) be compressed (.gz)
-	- FASTQ filenames are used by the scripts throughout this pipeline, and should easily identify the sample. For example, my filenames usually take the format: strain_treatment_IP_replicate (e.g. 93_D_8WG16_rep2). After demultiplexing, there is usually trailing info added to the filename: e.g. _S8_R1_001.fastq.gz. The S indicates the index number on your sample sheet, R1 and R2 indicate the paired reads from the sequencer, and 001 is a trailing number added for reasons beyond my comprehension.
-- FASTA files for genome alignment, included for S. cerevisiae and S. pombe in the 'genomes/bowtie2_index/' directory in this repository.
+	- FASTQ filenames are used by the scripts throughout this pipeline, and should easily identify the sample. For example, my filenames usually take the format: strain_treatment_IP_replicate (e.g. 93_D_8WG16_rep2). After demultiplexing, there is usually trailing info added to the filename (e.g. _S8_R1_001.fastq.gz). The S indicates the index number on your sample sheet, R1 and R2 indicate the paired reads from the sequencer, and 001 is a trailing number added for reasons beyond my comprehension.
+- Bowtie2 index files (.bt2) for genome alignment, included for *S. cerevisiae* and *S. pombe* in the `genomes/bowtie2_index/` directory in this repository.
 - BED files to tell deeptools which portions of the genome you would like to plot. I have included the standard non-overlapping ORF BED file from James Chuang in the `genomes/annotations/` directory of this repository.
 - Patience. It will likely take some troubleshooting and path editing in the slurm scripts to analyze your data. My goal is to make this process as pain-free as possible, so I will try to explain how each step functions so that you can debug with confidence.
 
@@ -77,9 +77,11 @@ Also generated is a summary of each alignment in the `logs/` directory:
 vim logs/<FILE_NAME>_bowtie2.txt
 ```
 
-We will use the 'sorted.bam' and 'sorted.bam.bai' files in subsequent steps. I don't think tha the 'unsorted.bam' files need to be saved, but I have not made a habit of deleting them.
+We will use the 'sorted.bam' and 'sorted.bam.bai' files in subsequent steps. I don't think that the 'unsorted.bam' files need to be saved, but I have not made a habit of deleting them.
 
-**4. Determine the distribution of insert sizes in your ChIP samples (since the reads are paired, we can determine the size of each fragment that was sequenced from its two ends).**
+**4. Determine the distribution of insert sizes in your ChIP samples.**
+
+Since the reads are paired, we can determine the size of each fragment that was sequenced from its two ends.
 
 ```bash
 # use deeptools to generate summary statistics for each sorted.bam file
