@@ -28,7 +28,7 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 
 ## instructions
 
-**1.** Clone this repository into a clean directory on O2.
+**1. Clone this repository into a clean directory on O2.**
 
 ```bash
 # clone the repository
@@ -39,9 +39,9 @@ cd chip_seq
 ```
 
 
-**2.** Download or transfer your .fastq.gz files into the 'fastq/' directory.
+**2. Download or transfer your .fastq.gz files into the 'fastq/' directory.**
 
-**3.** Align your libraries to the experimental and spike-in genomes.
+**3. Align your libraries to the experimental and spike-in genomes.**
 
 Run all commands from the root 'chip_seq' directory.
 
@@ -79,7 +79,7 @@ vim logs/<FILE_NAME>_bowtie2.txt
 
 We will use the 'sorted.bam' and 'sorted.bam.bai' files in subsequent steps. I don't think tha the 'unsorted.bam' files need to be saved, but I have not made a habit of deleting them.
 
-**4.** Determine the distribution of insert sizes in your ChIP samples (since the reads are paired, we can determine the size of each fragment that was sequenced from its two ends).
+**4. Determine the distribution of insert sizes in your ChIP samples (since the reads are paired, we can determine the size of each fragment that was sequenced from its two ends).**
 
 ```bash
 # use deeptools to generate summary statistics for each sorted.bam file
@@ -92,7 +92,7 @@ This script will look at all of the 'sorted.bam' files and will generate two new
 
 These files will be generated for the experimental and spike_in alignments separately.
 
-**5.** Count aligned reads for experimental and spike-in genomes.
+**5. Count aligned reads for experimental and spike-in genomes.**
 
 This step uses [samtools view](http://www.htslib.org/doc/samtools-view.html) to count the number of reads in each 'sorted.bam' file. 
 - -c makes samtools output only the count and not the reads themselves
@@ -108,7 +108,7 @@ This scripts creates two files in the 'logs/' directory: 'experimental_counts.lo
 - the second line is the number of paired reads that are mapped to the respective genome in each 'sorted.bam' file
 The lines continue to alternate for each BAM file processed.
 
-**6.** Do spike-in normalization math.
+**6. Do spike-in normalization math.**
 
 Spike-in normalization math is not intuitive (at least it isn't to me). I have included a PDF ('chip_spikeins.pdf') in this repository that was written by James Chuang and explains all of the logic and algebra behind this step. In short, the 'input' libraries allow us to empirically determine the proportion of experimental to spike-in material that went into each IP. 
 
@@ -122,7 +122,7 @@ The output of this step is a file called 'normalization_table.csv' that consists
 
 Currently, after this CSV is generated, I manually transfer it back to O2 and place it in the 'logs/' directory. Running the script locally on O2 will also make this second transfer unnecessary.
 
-**7.** Generate coverage tracks for each library scaled by spike-in normalization.
+**7. Generate coverage tracks for each library scaled by spike-in normalization.**
 
 
 
