@@ -17,14 +17,14 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 
 ## requirements
 
-- designed to be run on O2, the high-performance computing cluster at HMS
-- uses slurm job scheduler to batch submit jobs
+- Designed to be run on O2, the high-performance computing cluster at HMS
+- Uses slurm job scheduler to batch submit jobs
 - Paired-end FASTQ files from ChIP-seq libaries
 	- FASTQ files should be demultiplexed and can (should) be compressed (.gz)
 	- FASTQ filenames are used by the scripts throughout this pipeline, and should easily identify the sample. For example, my filenames usually take the format: strain_treatment_IP_replicate (e.g. 93_D_8WG16_rep2). After demultiplexing, there is usually trailing info added to the filename: e.g. _S8_R1_001.fastq.gz. The S indicates the index number on your sample sheet, R1 and R2 indicate the paired reads from the sequencer, and 001 is a trailing number added for reasons beyond my comprehension.
 - FASTA files for genome alignment, included for S. cerevisiae and S. pombe in the 'genomes/bowtie2_index/' directory in this repository.
 - BED files to tell deeptools which portions of the genome you would like to plot. I have included the standard non-overlapping ORF BED file from James Chuang in the 'genomes/annotations/' directory of this repository.
-- Some patience. It will likely take some troubleshooting and path editing in the slurm scripts to analyze your data. My goal is to make this process as pain-free as possible, so I will try to explain how each step functions so that you can debug with confidence.
+- Patience. It will likely take some troubleshooting and path editing in the slurm scripts to analyze your data. My goal is to make this process as pain-free as possible, so I will try to explain how each step functions so that you can debug with confidence.
 
 ## instructions
 
@@ -99,7 +99,7 @@ This step uses [samtools view](http://www.htslib.org/doc/samtools-view.html) to 
 - -F filters the BAM files to EXCLUDE reads that fit the [flag condition](https://broadinstitute.github.io/picard/explain-flags.html)
 	- the flag here is '388' which = unmapped OR not primary alignment OR second in pair (which confirms read pairs are only counted once and not twice)
 
-What the script looks like:
+What the script looks like under the hood:
 
 > ```bash
 > for name in /bam/*_sorted.bam; do
@@ -133,7 +133,54 @@ The output of this step is a file called 'normalization_table.csv' that consists
 
 Currently, after this CSV is generated, I manually transfer it back to O2 and place it in the 'logs/' directory. Running the script locally on O2 will also make this second transfer unnecessary.
 
+```bash
+# take a peek at the file
+vim logs/normalization_table.csv
+```
+
 **7. Generate coverage tracks for each library scaled by spike-in normalization.**
+
+Before we can calculate IP enrichment over input, we have to generate coverage tracks. We can use the scaling factors that we calculated in the previous step to normalize the coverage tracks at this stage.
+
+Similarly to how we submitted parallel jobs for each alignment, we'll do the same here. But how do we know which scaling factor to use? We need to match the BAM filename to the scaling factor in the 'normalization_table.csv' file. The first few lines of code handle this:
+
+> ```bash
+> base=$(basename ${1%} _sorted.bam)
+> 
+> alpha=$(grep ${base} logs/normalization_table.csv | cut -f2 -d,)
+> ```
+
+The first line strips the '_sorted.bam' from the filename and stores is as the variable 'base'. We did the same when we counted the reads. This means the filenames should match.
+
+The second line defines 'alpha' which is the scaling factor. It uses [`grep`](https://man7.org/linux/man-pages/man1/grep.1.html) to look in 'normalization_table.csv' for lines that match 'base'. There should only be one line that matches. `|` pipes that line into [`cut`](https://man7.org/linux/man-pages/man1/cut.1.html), which prints everything past the delimiter, here defined as ','. Since the second column (meaning everything past the ',') on that line is the matched scaling factor, this gets stored as 'alpha'.
+
+The rest of the script just plugs 'alpha' in as the scaling factor to `bamCoverage`. There are some parameters you can change here, read the [documentation](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html) if you feel like tweaking any of them. The parameters here are what I used for my Spt6 and Rpb1 ChIP-seq.
+
+> ```bash
+> bamCoverage -b ${1%} -o deeptools/si/${base}_si.bw \
+>        -bs 20 \
+> 	 --scaleFactor ${alpha} \
+>        --extendReads \
+>        -p max \
+>        --smoothLength 60 \
+>        --ignoreForNormalization chrM \
+>```
+
+The 'ignoreForNormalization' is probably superfluous since you are explicitly passing a scaling factor, but I have left it in for now (since I was previously using library size normalization for MNase-seq). I may remove it and this text at a later date.
+
+```bash
+# use a for loop to submit each coverage job in parallel
+for name in bam/*_sorted.bam; do sbatch scripts/bamCoverage_si.sh $name; done
+```
+
+This step outputs BIGWIG (.bw) files.
+
+```bash
+# check to see the files were made
+ls deeptools/si/
+```
+
+**8. Calculate log2 fold enrichment of IP/input coverage***
 
 
 
