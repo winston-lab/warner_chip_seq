@@ -11,6 +11,6 @@
 
 module load gcc/9.2.0 python/3.9.14 deeptools/3.5.0
 
-bamPEFragmentSize -b ./bam/*_sorted.bam -o fragment_sizes/PEF_histogram.png --table fragment_sizes/experimental_PEF_table.csv
+bamPEFragmentSize -b ./bam/*_sorted.bam -o fragment_sizes/experimental_PEF_histogram.png --table fragment_sizes/experimental_PEF_table.csv
 
 bamPEFragmentSize -b ./bam/spike_in/*_sorted.bam -o fragment_sizes/spikein_PEF_histogram.png --table fragment_sizes/spikein_PEF_table.csv

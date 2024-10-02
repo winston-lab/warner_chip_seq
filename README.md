@@ -180,7 +180,31 @@ This step outputs BIGWIG (.bw) files.
 ls deeptools/si/
 ```
 
-**8. Calculate log2 fold enrichment of IP/input coverage***
+**8. Calculate log2 fold enrichment of IP/input coverage**
+
+
+```bash
+# use a for loop to submit each replicate in parallel
+for rep in rep2 rep3 rep4; do sbatch scripts/bigwigCompare_chip.sh $rep; done
+```
+
+
+**9. Generate matrices to plot data.**
+
+```bash
+# use a for loop to submit each replicate in parallel
+for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_scale.sh $rep; done
+for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_reference.sh $rep; done
+```
+
+
+**10. Plot data.**
+
+```bash
+# use a for loop to submit each replicate in parallel
+for rep in rep2 rep3 rep4; do sbatch scripts/makeplots.sh $rep; done
+```
+
 
 
 
