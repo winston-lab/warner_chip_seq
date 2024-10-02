@@ -11,3 +11,4 @@ fastq/*
 *.log
 *.txt
 seq_output
+.DS_Store
