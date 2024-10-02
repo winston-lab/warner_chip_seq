@@ -1,19 +1,19 @@
 
-#ChIP-seq analysis pipeline
+# ChIP-seq analysis pipeline
 
 ## description
 
 An analysis pipeline for paired-end ChIP-seq data with the following major steps:
 
-- alignment with bowtie2 (.bam)
-- indexing and sorting alignment files (.bam and .bai)
-- summary of fragment sizes with deeptools PEFragmentSize
-- counting reads aligning to experimental (S. cerevisiae) and spike-in (S.pombe) genomes with samtools
+- alignment with [bowtie2](https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) (.bam)
+- indexing and sorting alignment files with [samtools](http://www.htslib.org/) (.bam and .bai)
+- summary of fragment sizes with [deeptools PEFragmentSize](https://deeptools.readthedocs.io/en/develop/content/tools/bamPEFragmentSize.html)
+- counting reads aligning to experimental (S. cerevisiae) and spike-in (S.pombe) genomes with [samtools view](http://www.htslib.org/doc/samtools-view.html)
 - calculation of per-library spike-in normalization scaling factors using a custom python script
-- generation of coverage tracks (.bw) scaled by spike-in normalization using deeptools bamCoverage
-- log2 fold enrichment of IP over input coverage (.bw) using deeptools bigwigCompare
-- generation of matrices for plotting scaled coverage data using deeptools (.gz) or directly in python (.tab) using deeptools computeMatrix
-- data visualization (heatmaps and metagenes) using deeptools plotting functions
+- generation of coverage tracks (.bw) scaled by spike-in normalization using [deeptools bamCoverage](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html)
+- log2 fold enrichment of IP over input coverage (.bw) using [deeptools bigwigCompare](https://deeptools.readthedocs.io/en/develop/content/tools/bigwigCompare.html)
+- generation of matrices for plotting scaled coverage data using deeptools (.gz) or directly in python (.tab) using [deeptools computeMatrix](https://deeptools.readthedocs.io/en/develop/content/tools/computeMatrix.html#reference-point)
+- data visualization ([heatmaps](https://deeptools.readthedocs.io/en/develop/content/tools/plotHeatmap.html) and [metagenes](https://deeptools.readthedocs.io/en/develop/content/tools/plotProfile.html)) using deeptools plotting functions and custome python scripts
 
 ## requirements
 
@@ -32,9 +32,9 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 
 ```bash
 # clone the repository
-git clone <INSERT URL HERE>
+git clone https://github.com/jamwarner/chip_seq.git
 
-# navigate to root directory
+# navigate to the newly created directory
 cd chip_seq
 ```
 
@@ -44,6 +44,8 @@ cd chip_seq
 **3.** Align your libraries to the experimental and spike-in genomes.
 
 Run all commands from the root 'chip_seq' directory.
+
+We will submit two alignment jobs for each library: one to the experimental genome and the othe to the spike-in genome. Submitting the jobs separately allows all of the alignments to run in parallel.
 
 ```bash
 # use a for loop to submit alignments for each set of paired reads separately
@@ -76,5 +78,52 @@ vim logs/<FILE_NAME>_bowtie2.txt
 ```
 
 We will use the 'sorted.bam' and 'sorted.bam.bai' files in subsequent steps. I don't think tha the 'unsorted.bam' files need to be saved, but I have not made a habit of deleting them.
+
+**4.** Determine the distribution of insert sizes in your ChIP samples (since the reads are paired, we can determine the size of each fragment that was sequenced from its two ends).
+
+```bash
+# use deeptools to generate summary statistics for each sorted.bam file
+sbatch scripts/bamPEFragmentSize.sh
+```
+
+This script will look at all of the 'sorted.bam' files and will generate two new files in the 'fragment_sizes/' directory:
+- a histogram showing the distribution of the insert sizes for each library
+- a CSV file with this information in tabular format. This is usually easier to interpret.
+
+These files will be generated for the experimental and spike_in alignments separately.
+
+**5.** Count aligned reads for experimental and spike-in genomes.
+
+This step uses [samtools view](http://www.htslib.org/doc/samtools-view.html) to count the number of reads in each 'sorted.bam' file. 
+- -c makes samtools output only the count and not the reads themselves
+- -F filters the BAM files to EXCLUDE reads that fit the [flag condition](https://broadinstitute.github.io/picard/explain-flags.html)
+	- the flag here is '388' which = unmapped OR not primary alignment OR second in pair (which confirms read pairs are only counted once and not twice)
+
+```bash
+sbatch scripts/read_counter.sh
+```
+
+This scripts creates two files in the 'logs/' directory: 'experimental_counts.log' and 'spikein_counts.log'. These files contain pairs of lines:
+- the first line is the BAM filename with '_sorted.bam' stripped
+- the second line is the number of paired reads that are mapped to the respective genome in each 'sorted.bam' file
+The lines continue to alternate for each BAM file processed.
+
+**6.** Do spike-in normalization math.
+
+Spike-in normalization math is not intuitive (at least it isn't to me). I have included a PDF ('chip_spikeins.pdf') in this repository that was written by James Chuang and explains all of the logic and algebra behind this step. In short, the 'input' libraries allow us to empirically determine the proportion of experimental to spike-in material that went into each IP. 
+
+Essentially, if we wanted to normalize the experimental input signal between libraries, we could just normalize by library size (number of experimental reads). Scaling by library size does not work for the IPs, however, as getting half as many experimental reads is meaningful (as long as the number of spike-in reads is the same). Therefore, if we use the spike-in reads to "link" the IP and input samples, we can scale each IP to the same scale as the input signal. Then you can calculate the IP enrichment over input, which is exactly what we want to do! (And is what we do in step 8.)
+
+At this point, I transfer these two '_counts.log' files to my computer and use a custom python script that I have written to determine the scaling factors to use for spike-in normalization. I plan to move this script into this repository and edit it so that it can be run on O2 instead of needing to run it locally. This python script may need extensive editing to make it work for your total number of samples, as well as for your number of IPs per input.
+
+The output of this step is a file called 'normalization_table.csv' that consists of two columns:
+- column 1 is the library name
+- column 2 is the scaling factor that will be used for normalization
+
+Currently, after this CSV is generated, I manually transfer it back to O2 and place it in the 'logs/' directory. Running the script locally on O2 will also make this second transfer unnecessary.
+
+**7.** Generate coverage tracks for each library scaled by spike-in normalization.
+
+
 
 
