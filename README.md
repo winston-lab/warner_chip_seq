@@ -70,7 +70,7 @@ ls bam/spike-in
 ```
 
 Also generated is a summary of each alignment in the logs/ directory:
-	- filename_bowtie2.txt
+- filename_bowtie2.txt
 
 ```bash
 # take a peek
@@ -98,6 +98,17 @@ This step uses [samtools view](http://www.htslib.org/doc/samtools-view.html) to 
 - -c makes samtools output only the count and not the reads themselves
 - -F filters the BAM files to EXCLUDE reads that fit the [flag condition](https://broadinstitute.github.io/picard/explain-flags.html)
 	- the flag here is '388' which = unmapped OR not primary alignment OR second in pair (which confirms read pairs are only counted once and not twice)
+
+What the script looks like:
+
+> ```bash
+> for name in /bam/*_sorted.bam; do
+> 	(basename ${name} _sorted.bam) >> /logs/experimental_counts.log
+> 	samtools view -c -F 388 ${name} >> /logs/experimental_counts.log
+> done
+> ```
+
+To run:
 
 ```bash
 sbatch scripts/read_counter.sh
