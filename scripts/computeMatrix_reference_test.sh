@@ -14,8 +14,8 @@ module load gcc/9.2.0 python/3.9.14 deeptools/3.5.0
 
 for IP in V5 8WG16 Flag; do
 
-computeMatrix reference-point -S deeptools/log2/si/*${IP}vinput_${1%}_si_log2.bw -R genome/annotations/Scer_transcripts_w_verifiedORFs-nonoverlapping.bed -o deeptools/log2/si/${IP}vinput_${1%}_si_log2_reference.gz \
-	--outFileNameMatrix deeptools/log2/si/tab/${IP}vinput_${1%}_si_log2_reference.tab \
+computeMatrix reference-point -S deeptools/log2/si/*${IP}vinput_${1%}_si_log2_test.bw -R genome/annotations/Scer_transcripts_w_verifiedORFs-nonoverlapping.bed -o deeptools/log2/si/${IP}vinput_${1%}_si_log2_reference_test.gz \
+	--outFileNameMatrix deeptools/log2/si/tab/${IP}vinput_${1%}_si_log2_reference_test.tab \
 	-a 4500 \
 	-b 250 \
 	-bs 10 \
