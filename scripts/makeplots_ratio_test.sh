@@ -14,31 +14,31 @@ module load gcc/6.2.0 python/2.7.12 deeptools/3.0.2
 	
 for IP in V5 8WG16 Flag; do
 
-plotHeatmap -m deeptools/ratio/si/${IP}vinput_${1%}_si_ratio_nop_test_scale.gz -o deeptools/plots/ratio/${IP}vinput_${1%}_si_ratio_nop_test_scale_heatmap.png \
+plotHeatmap -m deeptools/ratio/si/test/${IP}vinput_${1%}_si_test_ratio_scale.gz -o deeptools/plots/ratio/test/${IP}vinput_${1%}_si_test_ratio_scale_heatmap.png \
 	--dpi 300 \
 	--startLabel "TSS" \
 	--endLabel "TES" \
 	-y "normalized counts" \
-        --plotTitle "${IP} over input ${1%} no-pseudo TEST" \
+        --plotTitle "${IP} over input ${1%} TEST" \
         --heatmapWidth 8 \
 	--averageTypeSummaryPlot mean \
 
-plotHeatmap -m deeptools/ratio/si/${IP}vinput_${1%}_si_ratio_nop_test_reference.gz -o deeptools/plots/ratio/${IP}vinput_${1%}_si_ratio_nop_test_reference_heatmap.png \
+plotHeatmap -m deeptools/ratio/si/test/${IP}vinput_${1%}_si_test_ratio_reference.gz -o deeptools/plots/ratio/test/${IP}vinput_${1%}_si_test_ratio_reference_heatmap.png \
 	--dpi 300 \
 	--refPointLabel "TSS" \
 	--sortRegions ascend \
 	--whatToShow "heatmap and colorbar" \
 	--sortUsing region_length \
 	-y "normalized counts" \
-        --plotTitle "${IP} over input ${1%} no-pseudo TEST" \
+        --plotTitle "${IP} over input ${1%} TEST" \
         --heatmapWidth 8 \
 
-plotProfile -m deeptools/ratio/si/${IP}vinput_${1%}_si_ratio_nop_test_scale.gz -o deeptools/plots/ratio/${IP}vinput_${1%}_si_ratio_nop_test_scale_profile.png \
+plotProfile -m deeptools/ratio/si/test/${IP}vinput_${1%}_si_test_ratio_scale.gz -o deeptools/plots/ratio/test/${IP}vinput_${1%}_si_test_ratio_scale_profile.png \
 	--dpi 300 \
 	--plotHeight 12 \
 	--plotWidth 12 \
 	-y "normalized counts" \
-	--plotTitle "${IP} over input ${1%} no-pseudo TEST" \
+	--plotTitle "${IP} over input ${1%} TEST" \
 	--startLabel "TSS" \
 	--endLabel "TES" \
 	--perGroup \

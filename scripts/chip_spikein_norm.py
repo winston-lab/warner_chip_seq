@@ -99,6 +99,17 @@ for i in [0,1,2,12,13,14,24,25,26,36,37,38]:
 #     print(aligned_reads.loc[[i,i+3,i+6,i+9], "library"])
     aligned_reads.loc[[i,i+3,i+6,i+9], 'alpha_IP'] = 1/(aligned_reads.loc[[i,i+3,i+6,i+9],"spom_counts"]*norm[i+6])
 
+### Testing to make sure that spike-in math was done correctly
+# lala = [0,1,2,12,13,14,24,25,26,36,37,38]
+# lele = [i+6 for i in lala]
+
+# input_spike = aligned_reads.loc[lele, 'spom_counts']
+# input_exp = aligned_reads.loc[lele, 'scer_counts']
+
+# for i in [0,1,2,12,13,14,24,25,26,36,37,38]:
+#     aligned_reads.loc[[i,i+3,i+6,i+9], 'test'] = (input_spike[i+6])/((aligned_reads.loc[[i,i+3,i+6,i+9],"spom_counts"])*(input_exp[i+6]))
+
+# aligned_reads[['library', 'alpha_IP', 'test']]
 
 
 
