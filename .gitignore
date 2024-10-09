@@ -13,3 +13,6 @@
 *.txt
 seq_output
 .DS_Store
+*.tab
+*.ai
+plots/*.pdf
