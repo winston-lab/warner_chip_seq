@@ -11,7 +11,9 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 - counting reads aligning to experimental (*S. cerevisiae*) and spike-in (*S.pombe*) genomes with [`samtools view`](http://www.htslib.org/doc/samtools-view.html)
 - calculation of per-library spike-in normalization scaling factors using a custom python script
 - generation of coverage tracks (.bw) scaled by spike-in normalization using [`deeptools bamCoverage`](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html)
-- log2 fold enrichment of IP over input coverage (.bw) using [`deeptools bigwigCompare`](https://deeptools.readthedocs.io/en/develop/content/tools/bigwigCompare.html)
+- generation of matrices for calculating correlation between datasets using [`multiBigwigSummary`](https://deeptools.readthedocs.io/en/develop/content/tools/multiBigwigSummary.html)
+- calculation and plotting of correlation between datasets using [`plotCorrelation`](https://deeptools.readthedocs.io/en/stable/content/tools/plotCorrelation.html)
+- enrichment of IP over input coverage (.bw) using [`deeptools bigwigCompare`](https://deeptools.readthedocs.io/en/develop/content/tools/bigwigCompare.html)
 - generation of matrices for plotting scaled coverage data using deeptools (.gz) or directly in python (.tab) using [`deeptools computeMatrix`](https://deeptools.readthedocs.io/en/develop/content/tools/computeMatrix.html#reference-point)
 - data visualization ([heatmaps](https://deeptools.readthedocs.io/en/develop/content/tools/plotHeatmap.html) and [metagenes](https://deeptools.readthedocs.io/en/develop/content/tools/plotProfile.html)) using `deeptools` plotting functions and custom python scripts
 
@@ -126,7 +128,7 @@ Spike-in normalization math is not intuitive (at least it isn't to me). I have i
 
 Essentially, if we wanted to normalize the experimental input signal between libraries, we could just normalize by library size (number of experimental reads). Scaling by library size does not work for the IPs, however, as getting half as many experimental reads is meaningful (as long as the number of spike-in reads is the same). Therefore, if we use the spike-in reads to "link" the IP and input samples, we can scale each IP to the same scale as the input signal. Then you can calculate the IP enrichment over input, which is exactly what we want to do! (And is what we do in step 8.)
 
-At this point, I transfer these two '_counts.log' files to my computer and use a custom python script that I have written to determine the scaling factors to use for spike-in normalization. I plan to move this script into this repository and edit it so that it can be run on O2 instead of needing to run it locally. This python script may need extensive editing to make it work for your total number of samples, as well as for your number of IPs per input.
+At this point, I transfer these two '_counts.log' files to my computer and use a custom python script that I have written to determine the scaling factors to use for spike-in normalization. I plan to move this script into this repository and edit it so that it can be run on O2 instead of needing to run it locally. This python script may need extensive editing to make it work for your total number of samples, as well as for your number of IPs per input. If you look carefully at the math that is being done, I multiply the calculated scaling factor by 10000000. This is purely to make the resulting coverage numbers human readable: since each scaling factor is multiplied by the same constant, it does not affect the ratios between libraries.
 
 The output of this step is a file called 'normalization_table.csv' that consists of two columns:
 - column 1 is the library name
@@ -181,8 +183,9 @@ This step outputs BIGWIG (.bw) files.
 ls deeptools/si/
 ```
 
-**8. Calculate log2 fold enrichment of IP/input coverage**
+**8. Calculate fold enrichment of IP/input coverage**
 
+This step calculates the ratio of IP to input for each bin.
 
 ```bash
 # use a for loop to submit each replicate in parallel
