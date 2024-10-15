@@ -183,7 +183,15 @@ This step outputs BIGWIG (.bw) files.
 ls deeptools/si/
 ```
 
-**8. Calculate fold enrichment of IP/input coverage**
+**8. Calculate correlation of ChIP coverage**
+
+Entire genome minus chrM, binsize 200, using `multiBigwigSummary`, all replicates, need to figrue out how to remove 'input' samples.
+
+Plot results using `plotCorrelation`, also generate tabular files (.tab) that can be imported into python locally for better heatmap plotting control.
+
+
+
+**9. Calculate fold enrichment of IP/input coverage**
 
 This step calculates the ratio of IP to input for each bin.
 
@@ -193,7 +201,7 @@ for rep in rep2 rep3 rep4; do sbatch scripts/bigwigCompare_chip.sh $rep; done
 ```
 
 
-**9. Generate matrices to plot data.**
+**10. Generate matrices to plot data.**
 
 ```bash
 # use a for loop to submit each replicate in parallel
@@ -202,7 +210,7 @@ for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_reference.sh $rep; do
 ```
 
 
-**10. Plot data.**
+**11. Plot data.**
 
 ```bash
 # use a for loop to submit each replicate in parallel
