@@ -14,7 +14,7 @@ module load gcc/6.2.0 python/2.7.12 deeptools/3.0.2
 	
 for IP in V5 Flag; do
 
-plotHeatmap -m deeptools/ratio/si/${IP}v8WG16_${1%}_si_ratio_scale.gz -o deeptools/plots/ratio/${IP}v8WG16_${1%}_si_ratio_scale_heatmap.png \
+plotHeatmap -m deeptools/ratio/${IP}v8WG16_${1%}_si_ratio_scale.gz -o deeptools/plots/ratio/${IP}v8WG16_${1%}_si_ratio_scale_heatmap.png \
 	--dpi 300 \
 	--startLabel "TSS" \
 	--endLabel "TES" \
@@ -23,7 +23,7 @@ plotHeatmap -m deeptools/ratio/si/${IP}v8WG16_${1%}_si_ratio_scale.gz -o deeptoo
         --heatmapWidth 8 \
 	--averageTypeSummaryPlot mean \
 
-plotHeatmap -m deeptools/ratio/si/${IP}v8WG16_${1%}_si_ratio_reference.gz -o deeptools/plots/ratio/${IP}v8WG16_${1%}_si_ratio_reference_heatmap.png \
+plotHeatmap -m deeptools/ratio/${IP}v8WG16_${1%}_si_ratio_reference.gz -o deeptools/plots/ratio/${IP}v8WG16_${1%}_si_ratio_reference_heatmap.png \
 	--dpi 300 \
 	--refPointLabel "TSS" \
 	--sortRegions ascend \
@@ -33,7 +33,7 @@ plotHeatmap -m deeptools/ratio/si/${IP}v8WG16_${1%}_si_ratio_reference.gz -o dee
         --plotTitle "${IP} over 8WG16 ${1%}" \
         --heatmapWidth 8 \
 
-plotProfile -m deeptools/ratio/si/${IP}v8WG16_${1%}_si_ratio_scale.gz -o deeptools/plots/ratio/${IP}v8WG16_${1%}_si_ratio_scale_profile.png \
+plotProfile -m deeptools/ratio/${IP}v8WG16_${1%}_si_ratio_scale.gz -o deeptools/plots/ratio/${IP}v8WG16_${1%}_si_ratio_scale_profile.png \
 	--dpi 300 \
 	--plotHeight 12 \
 	--plotWidth 12 \

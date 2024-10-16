@@ -14,8 +14,8 @@ module load gcc/9.2.0 python/3.9.14 deeptools/3.5.0
 
 for IP in V5 8WG16 Flag; do
 
-computeMatrix scale-regions -S deeptools/ratio/si/*${IP}vinput_${1%}_si_ratio.bw -R genome/annotations/Scer_transcripts_w_verifiedORFs-nonoverlapping.bed -m 1000 -o deeptools/ratio/si/${IP}vinput_${1%}_si_ratio_scale.gz \
-	--outFileNameMatrix deeptools/ratio/si/tab/${IP}vinput_${1%}_si_ratio_scale.tab \
+computeMatrix scale-regions -S deeptools/ratio/*${IP}vinput_${1%}_si_ratio.bw -R genome/annotations/Scer_transcripts_w_verifiedORFs-nonoverlapping.bed -m 1000 -o deeptools/ratio/${IP}vinput_${1%}_si_ratio_scale.gz \
+	--outFileNameMatrix deeptools/ratio/tab/${IP}vinput_${1%}_si_ratio_scale.tab \
 	-a 250 \
 	-b 250 \
 	-bs 10 \

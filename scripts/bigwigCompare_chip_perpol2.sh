@@ -12,42 +12,42 @@
 module load gcc/9.2.0 python/3.9.14 deeptools/3.5.0
 
 
-bigwigCompare -b1 deeptools/ratio/si/93_D_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/93_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/93_D_V5v8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/93_D_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/93_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/93_D_V5v8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
 
-bigwigCompare -b1 deeptools/ratio/si/93_I_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/93_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/93_I_V5v8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/93_I_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/93_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/93_I_V5v8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
 
-bigwigCompare -b1 deeptools/ratio/si/95_D_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/95_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/95_D_V5v8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/95_D_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/95_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/95_D_V5v8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
 
-bigwigCompare -b1 deeptools/ratio/si/95_I_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/95_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/95_I_V5v8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/95_I_V5vinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/95_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/95_I_V5v8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
 
-bigwigCompare -b1 deeptools/ratio/si/93_D_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/93_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/93_D_Flagv8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/93_D_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/93_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/93_D_Flagv8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
 
-bigwigCompare -b1 deeptools/ratio/si/93_I_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/93_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/93_I_Flagv8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/93_I_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/93_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/93_I_Flagv8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
 
-bigwigCompare -b1 deeptools/ratio/si/95_D_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/95_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/95_D_Flagv8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/95_D_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/95_D_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/95_D_Flagv8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
 
-bigwigCompare -b1 deeptools/ratio/si/95_I_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/si/95_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/si/95_I_Flagv8WG16_${1%}_si_ratio.bw \
+bigwigCompare -b1 deeptools/ratio/95_I_Flagvinput_${1%}*_si_ratio.bw -b2 deeptools/ratio/95_I_8WG16vinput_${1%}*_si_ratio.bw -o deeptools/ratio/95_I_Flagv8WG16_${1%}_si_ratio.bw \
         --operation ratio \
         -bs 20 \
         -p max
