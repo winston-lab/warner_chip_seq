@@ -12,7 +12,7 @@
 
 module load gcc/9.2.0 python/3.9.14 deeptools/3.5.0
 
-multiBigwigSummary bins -b deeptools/si/*_test.bw \
+multiBigwigSummary bins -b deeptools/si/*_si.bw \
 	-o correlation/scores_per_bin.gz \
 	--smartLabels \
 	-bs 200 \
