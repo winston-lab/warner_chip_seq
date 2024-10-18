@@ -40,7 +40,24 @@ git clone https://github.com/jamwarner/chip_seq.git
 cd chip_seq
 ```
 
-Run all commands from the root `chip_seq` directory.
+Run all commands from the base `chip_seq` directory.
+
+All Slurm submission scripts have a header that tells Slurm the parameters of the job.  It looks like this:
+
+```
+#SBATCH --partition=short                      # Partition to run in
+#SBATCH -c 4                                 # Requested cores
+#SBATCH --time=0-03:00                    # Runtime in D-HH:MM format
+#SBATCH --mem=2GB                           # Requested Memory
+#SBATCH -o %j.out                            # File to which STDOUT will be written, including job ID (%j)
+#SBATCH -e %j.err                            # File to which STDERR will be written, including job ID (%j)
+#SBATCH --mail-type=ALL                      # ALL email notification type
+#SBATCH --mail-user=<YOUR_EMAIL_HERE>          # Email to which notifications will be sent
+```
+
+This job uses the 'short' partition, requests 4 cores, has a maximum runtime of 3 hours, requests 2 GB in memory, writes two additonal files (<JOB_ID>.out and <JOB_ID>.err) in the base directory that are useful for troubleshooting if jobs fail, and sends update emails on the jobs to the email address provided. I highly suggest you put your email in here so that you get pinged when jobs complete.
+
+For more information on Slurm, [see here](https://harvardmed.atlassian.net/wiki/spaces/O2/pages/1586793632/Using+Slurm+Basic).
 
 **2. Download or transfer your .fastq.gz files into the `fastq/` directory.**
 
@@ -183,7 +200,7 @@ This step outputs BIGWIG (.bw) files.
 ls deeptools/si/
 ```
 
-**8. Calculate correlation of ChIP coverage**
+**8. Calculate correlation of ChIP coverage -- work in progress, you can safely skip this step**
 
 Entire genome minus chrM, binsize 200, using `multiBigwigSummary`, all replicates, need to figrue out how to remove 'input' samples.
 
@@ -191,7 +208,7 @@ Plot results using `plotCorrelation`, also generate tabular files (.tab) that ca
 
 
 
-**9. Calculate fold enrichment of IP/input coverage**
+**9. Calculate enrichment of IP/input coverage**
 
 This step calculates the ratio of IP to input for each bin.
 
@@ -200,8 +217,12 @@ This step calculates the ratio of IP to input for each bin.
 for rep in rep2 rep3 rep4; do sbatch scripts/bigwigCompare_chip.sh $rep; done
 ```
 
+There should now be new .bw files in the `deeptools/ratio` directory with `<IP>vinput_<rep>_si_ratio.bw` style names. These show the enrichment of IP coverage over input coverage.
+
 
 **10. Generate matrices to plot data.**
+
+Using these new enrichment files, generate matrices with which to plot the data.
 
 ```bash
 # use a for loop to submit each replicate in parallel
@@ -209,6 +230,7 @@ for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_scale.sh $rep; done
 for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_reference.sh $rep; done
 ```
 
+There should now be new .gz files in the `deeptools/ratio` directory that will be used in the next step to plot the results. The uncompressed matrices are also saved in `deeptools/ratio/tab` in tab delimeted format so that you can import them into python and plot the data manually.
 
 **11. Plot data.**
 
@@ -217,12 +239,13 @@ for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_reference.sh $rep; do
 for rep in rep2 rep3 rep4; do sbatch scripts/makeplots.sh $rep; done
 ```
 
+Plots are found in the `deeptools/plots` directory.
 
-To transfer data:
+**To transfer data:**
 
 ```bash
 # from a terminal session that is not logged in to O2
-scp -r <HMSID>@rc.transfer.hms.harvard.edu:/n/groups/winston/<your/file_path/here> <destination/file_path/here>
+scp -r <YOUR_HMSID>@rc.transfer.hms.harvard.edu:/n/groups/winston/<your/file_path/here> <destination/file_path/here>
 ```
 
 
