@@ -21,5 +21,7 @@ computeMatrix reference-point -S deeptools/ratio/*${IP}vinput_${1%}_si_ratio.bw 
 	-bs 10 \
 	--averageTypeBins mean \
 	--nanAfterEnd \
+	--sortRegions ascend \
+	--sortUsing region_length \
 
 done
