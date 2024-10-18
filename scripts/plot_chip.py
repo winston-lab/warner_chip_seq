@@ -666,12 +666,16 @@ rep3_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinpu
                  sep='\t', header=3)
 rep4_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinput_rep4_si_test_ratio_scale.tab', 
                  sep='\t', header=3)
+
+#Rpb1
 rep2_RvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/8WG16vinput_rep2_si_test_ratio_scale.tab', 
                  sep='\t', header=3)
 rep3_RvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/8WG16vinput_rep3_si_test_ratio_scale.tab', 
                  sep='\t', header=3)
 rep4_RvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/8WG16vinput_rep4_si_test_ratio_scale.tab', 
                  sep='\t', header=3)
+
+#Flag per Rpb1
 rep2_FvR = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagv8WG16_rep2_si_test_ratio_scale.tab', 
                  sep='\t', header=3)
 rep3_FvR = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagv8WG16_rep3_si_test_ratio_scale.tab', 
@@ -796,18 +800,21 @@ rep4_toplot['Spt6Δ2-238_V5'] = rep4_VvI.iloc[:,450:600].mean(1)
 ### Testing showing density of points
 
 #Rep 2
+
 plt.figure(figsize=(4,4), dpi=300)
 values = np.vstack([rep2_toplot['Spt6_Flag'], rep2_toplot['Spt6Δ2-238_Flag']])
 kernel = scipy.stats.gaussian_kde(values)(values)
 plt.plot([-0.5,13],[-0.5,13], color='black', linestyle='--', linewidth=1, zorder=1)
 sns.scatterplot(data=rep2_toplot, x='Spt6_Flag', y='Spt6Δ2-238_Flag', 
-                s=7, c=kernel, cmap='inferno', zorder=2)
+                s=15, c=kernel, cmap='inferno', zorder=2)
 plt.xlim(-0.5,13)
-plt.xlabel('Spt6')
-plt.ylabel('Spt6Δ2-238')
+plt.xticks(fontsize=16)
+plt.xlabel('Spt6', fontsize=18)
+plt.ylabel('Spt6Δ2-238', fontsize=18)
+plt.yticks(fontsize=16)
 plt.ylim(-0.5,13)
-plt.title('Flag rep2')
-plt.savefig('Flag_rep2_scatter.png')
+plt.title('$\\alpha\mathdefault{-Flag}$ rep2', fontsize=20, pad=10)
+plt.savefig('Flag_rep2_scatter.svg')
 plt.show();
 
 plt.figure(figsize=(4,4), dpi=300)
@@ -815,28 +822,74 @@ values = np.vstack([rep2_toplot['Spt6_8WG16'], rep2_toplot['Spt6Δ2-238_8WG16']]
 kernel = scipy.stats.gaussian_kde(values)(values)
 plt.plot([-0.5,25],[-0.5,25], color='black', linestyle='--', linewidth=1, zorder=1)
 sns.scatterplot(data=rep2_toplot, x='Spt6_8WG16', y='Spt6Δ2-238_8WG16', 
-                s=7, c=kernel, cmap='inferno', zorder=2)
+                s=15, c=kernel, cmap='inferno', zorder=2)
 plt.xlim(-0.5,25)
-plt.xlabel('Spt6')
-plt.ylabel('Spt6Δ2-238')
+plt.xticks(fontsize=16)
+plt.xlabel('Spt6', fontsize=18)
+plt.ylabel('Spt6Δ2-238', fontsize=18)
+plt.yticks(fontsize=16)
 plt.ylim(-0.5,25)
-plt.title('Rpb1 rep2')
-plt.savefig('8WG16_rep2_scatter.png')
+plt.title('$\\alpha\mathdefault{-Rpb1}$ rep2', fontsize=20, pad=10)
+plt.savefig('8WG16_rep2_scatter.svg')
 plt.show();
 
 plt.figure(figsize=(4,4), dpi=300)
 values = np.vstack([rep2_toplot['Spt6_Flagv8WG16'], rep2_toplot['Spt6Δ2-238_Flagv8WG16']])
 kernel = scipy.stats.gaussian_kde(values)(values)
-plt.plot([-0.5,1.5],[-0.5,1.5], color='black', linestyle='--', linewidth=1, zorder=1)
+plt.plot([-0.5,13],[-0.5,13], color='black', linestyle='--', linewidth=1, zorder=1)
 sns.scatterplot(data=rep2_toplot, x='Spt6_Flagv8WG16', y='Spt6Δ2-238_Flagv8WG16',
-                s=7, c=kernel, cmap='inferno', zorder=2)
+                s=15, c=kernel, cmap='inferno', zorder=2)
 plt.xlim(0,1.25)
-plt.xlabel('Spt6')
-plt.ylabel('Spt6Δ2-238')
+plt.xticks(fontsize=16)
+plt.xlabel('Spt6', fontsize=18)
+plt.ylabel('Spt6Δ2-238', fontsize=18)
+plt.yticks(fontsize=16)
 plt.ylim(0,1.25)
-plt.title('Flag/Rpb1 rep2')
-plt.savefig('Flag_v_8WG16_rep2_scatter.png')
+plt.title('$\\frac{\\alpha\mathdefault{-Flag}}{\\alpha\mathdefault{-Rpb1}}$ rep2', fontsize=26, pad=20)
+plt.savefig('Flag_v_8WG16_rep2_scatter.svg')
 plt.show();
+
+# plt.figure(figsize=(4,4), dpi=300)
+# values = np.vstack([rep2_toplot['Spt6_Flag'], rep2_toplot['Spt6Δ2-238_Flag']])
+# kernel = scipy.stats.gaussian_kde(values)(values)
+# plt.plot([-0.5,13],[-0.5,13], color='black', linestyle='--', linewidth=1, zorder=1)
+# sns.scatterplot(data=rep2_toplot, x='Spt6_Flag', y='Spt6Δ2-238_Flag', 
+#                 s=7, c=kernel, cmap='inferno', zorder=2)
+# plt.xlim(-0.5,13)
+# plt.xlabel('Spt6')
+# plt.ylabel('Spt6Δ2-238')
+# plt.ylim(-0.5,13)
+# plt.title('Flag rep2')
+# plt.savefig('Flag_rep2_scatter.png')
+# plt.show();
+
+# plt.figure(figsize=(4,4), dpi=300)
+# values = np.vstack([rep2_toplot['Spt6_8WG16'], rep2_toplot['Spt6Δ2-238_8WG16']])
+# kernel = scipy.stats.gaussian_kde(values)(values)
+# plt.plot([-0.5,25],[-0.5,25], color='black', linestyle='--', linewidth=1, zorder=1)
+# sns.scatterplot(data=rep2_toplot, x='Spt6_8WG16', y='Spt6Δ2-238_8WG16', 
+#                 s=7, c=kernel, cmap='inferno', zorder=2)
+# plt.xlim(-0.5,25)
+# plt.xlabel('Spt6')
+# plt.ylabel('Spt6Δ2-238')
+# plt.ylim(-0.5,25)
+# plt.title('Rpb1 rep2')
+# plt.savefig('8WG16_rep2_scatter.png')
+# plt.show();
+
+# plt.figure(figsize=(4,4), dpi=300)
+# values = np.vstack([rep2_toplot['Spt6_Flagv8WG16'], rep2_toplot['Spt6Δ2-238_Flagv8WG16']])
+# kernel = scipy.stats.gaussian_kde(values)(values)
+# plt.plot([-0.5,1.5],[-0.5,1.5], color='black', linestyle='--', linewidth=1, zorder=1)
+# sns.scatterplot(data=rep2_toplot, x='Spt6_Flagv8WG16', y='Spt6Δ2-238_Flagv8WG16',
+#                 s=7, c=kernel, cmap='inferno', zorder=2)
+# plt.xlim(0,1.25)
+# plt.xlabel('Spt6')
+# plt.ylabel('Spt6Δ2-238')
+# plt.ylim(0,1.25)
+# plt.title('Flag/Rpb1 rep2')
+# plt.savefig('Flag_v_8WG16_rep2_scatter.png')
+# plt.show();
 
 # V5
 plt.figure(figsize=(4,4), dpi=300)
@@ -975,18 +1028,21 @@ plt.show();
 
 
 #Rep 4
+
 plt.figure(figsize=(4,4), dpi=300)
 values = np.vstack([rep4_toplot['Spt6_Flag'], rep4_toplot['Spt6Δ2-238_Flag']])
 kernel = scipy.stats.gaussian_kde(values)(values)
 plt.plot([-0.5,13],[-0.5,13], color='black', linestyle='--', linewidth=1, zorder=1)
 sns.scatterplot(data=rep4_toplot, x='Spt6_Flag', y='Spt6Δ2-238_Flag', 
-                s=7, c=kernel, cmap='inferno', zorder=2)
+                s=15, c=kernel, cmap='inferno', zorder=2)
 plt.xlim(-0.5,13)
-plt.xlabel('Spt6')
-plt.ylabel('Spt6Δ2-238')
+plt.xticks(fontsize=16)
+plt.xlabel('Spt6', fontsize=18)
+plt.ylabel('Spt6Δ2-238', fontsize=18)
+plt.yticks(fontsize=16)
 plt.ylim(-0.5,13)
-plt.title('Flag rep4')
-plt.savefig('Flag_rep4_scatter.png')
+plt.title('$\\alpha\mathdefault{-Flag}$ rep4', fontsize=20, pad=10)
+plt.savefig('Flag_rep4_scatter.svg')
 plt.show();
 
 plt.figure(figsize=(4,4), dpi=300)
@@ -994,13 +1050,15 @@ values = np.vstack([rep4_toplot['Spt6_8WG16'], rep4_toplot['Spt6Δ2-238_8WG16']]
 kernel = scipy.stats.gaussian_kde(values)(values)
 plt.plot([-0.5,25],[-0.5,25], color='black', linestyle='--', linewidth=1, zorder=1)
 sns.scatterplot(data=rep4_toplot, x='Spt6_8WG16', y='Spt6Δ2-238_8WG16', 
-                s=7, c=kernel, cmap='inferno', zorder=2)
+                s=15, c=kernel, cmap='inferno', zorder=2)
 plt.xlim(-0.5,25)
-plt.xlabel('Spt6')
-plt.ylabel('Spt6Δ2-238')
+plt.xticks(fontsize=16)
+plt.xlabel('Spt6', fontsize=18)
+plt.ylabel('Spt6Δ2-238', fontsize=18)
+plt.yticks(fontsize=16)
 plt.ylim(-0.5,25)
-plt.title('Rpb1 rep4')
-plt.savefig('8WG16_rep4_scatter.png')
+plt.title('$\\alpha\mathdefault{-Rpb1}$ rep4', fontsize=20, pad=10)
+plt.savefig('8WG16_rep4_scatter.svg')
 plt.show();
 
 plt.figure(figsize=(4,4), dpi=300)
@@ -1008,14 +1066,58 @@ values = np.vstack([rep4_toplot['Spt6_Flagv8WG16'], rep4_toplot['Spt6Δ2-238_Fla
 kernel = scipy.stats.gaussian_kde(values)(values)
 plt.plot([-0.5,13],[-0.5,13], color='black', linestyle='--', linewidth=1, zorder=1)
 sns.scatterplot(data=rep4_toplot, x='Spt6_Flagv8WG16', y='Spt6Δ2-238_Flagv8WG16',
-                s=7, c=kernel, cmap='inferno', zorder=2)
+                s=15, c=kernel, cmap='inferno', zorder=2)
 plt.xlim(0,1.25)
-plt.xlabel('Spt6')
-plt.ylabel('Spt6Δ2-238')
+plt.xticks(fontsize=16)
+plt.xlabel('Spt6', fontsize=18)
+plt.ylabel('Spt6Δ2-238', fontsize=18)
+plt.yticks(fontsize=16)
 plt.ylim(0,1.25)
-plt.title('Flag/Rpb1 rep4')
-plt.savefig('Flag_v_8WG16_rep4_scatter.png')
+plt.title('$\\frac{\\alpha\mathdefault{-Flag}}{\\alpha\mathdefault{-Rpb1}}$ rep4', fontsize=26, pad=20)
+plt.savefig('Flag_v_8WG16_rep4_scatter.svg')
 plt.show();
+
+# plt.figure(figsize=(4,4), dpi=300)
+# values = np.vstack([rep4_toplot['Spt6_Flag'], rep4_toplot['Spt6Δ2-238_Flag']])
+# kernel = scipy.stats.gaussian_kde(values)(values)
+# plt.plot([-0.5,13],[-0.5,13], color='black', linestyle='--', linewidth=1, zorder=1)
+# sns.scatterplot(data=rep4_toplot, x='Spt6_Flag', y='Spt6Δ2-238_Flag', 
+#                 s=7, c=kernel, cmap='inferno', zorder=2)
+# plt.xlim(-0.5,13)
+# plt.xlabel('Spt6')
+# plt.ylabel('Spt6Δ2-238')
+# plt.ylim(-0.5,13)
+# plt.title('Flag rep4')
+# plt.savefig('Flag_rep4_scatter.png')
+# plt.show();
+
+# plt.figure(figsize=(4,4), dpi=300)
+# values = np.vstack([rep4_toplot['Spt6_8WG16'], rep4_toplot['Spt6Δ2-238_8WG16']])
+# kernel = scipy.stats.gaussian_kde(values)(values)
+# plt.plot([-0.5,25],[-0.5,25], color='black', linestyle='--', linewidth=1, zorder=1)
+# sns.scatterplot(data=rep4_toplot, x='Spt6_8WG16', y='Spt6Δ2-238_8WG16', 
+#                 s=7, c=kernel, cmap='inferno', zorder=2)
+# plt.xlim(-0.5,25)
+# plt.xlabel('Spt6')
+# plt.ylabel('Spt6Δ2-238')
+# plt.ylim(-0.5,25)
+# plt.title('Rpb1 rep4')
+# plt.savefig('8WG16_rep4_scatter.png')
+# plt.show();
+
+# plt.figure(figsize=(4,4), dpi=300)
+# values = np.vstack([rep4_toplot['Spt6_Flagv8WG16'], rep4_toplot['Spt6Δ2-238_Flagv8WG16']])
+# kernel = scipy.stats.gaussian_kde(values)(values)
+# plt.plot([-0.5,13],[-0.5,13], color='black', linestyle='--', linewidth=1, zorder=1)
+# sns.scatterplot(data=rep4_toplot, x='Spt6_Flagv8WG16', y='Spt6Δ2-238_Flagv8WG16',
+#                 s=7, c=kernel, cmap='inferno', zorder=2)
+# plt.xlim(0,1.25)
+# plt.xlabel('Spt6')
+# plt.ylabel('Spt6Δ2-238')
+# plt.ylim(0,1.25)
+# plt.title('Flag/Rpb1 rep4')
+# plt.savefig('Flag_v_8WG16_rep4_scatter.png')
+# plt.show();
 
 
 ### Testing boxplots
@@ -1103,94 +1205,103 @@ sns.set_style('ticks')
 # V5
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep2_toplot.melt(value_vars=['Spt6_V5_DMSO', 'Spt6_V5', 'Spt6Δ2-238_V5_DMSO', 'Spt6Δ2-238_V5']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='V5 coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,2.5))
-lala.set(title='rep2')
+lala.set(title='V5 rep2')
+plt.savefig('V5_rep2_boxplot.svg')
 plt.show();
 
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep3_toplot.melt(value_vars=['Spt6_V5_DMSO', 'Spt6_V5', 'Spt6Δ2-238_V5_DMSO', 'Spt6Δ2-238_V5']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='V5 coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,2.5))
-lala.set(title='rep3')
+lala.set(title='V5 rep3')
+plt.savefig('V5_rep3_boxplot.svg')
 plt.show();
 
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep4_toplot.melt(value_vars=['Spt6_V5_DMSO', 'Spt6_V5', 'Spt6Δ2-238_V5_DMSO', 'Spt6Δ2-238_V5']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='V5 coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,2.5))
-lala.set(title='rep4')
+lala.set(title='V5 rep4')
+plt.savefig('V5_rep4_boxplot.svg')
 plt.show();
 
 # Flag
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep2_toplot.melt(value_vars=['Spt6_Flag_DMSO', 'Spt6_Flag', 'Spt6Δ2-238_Flag_DMSO', 'Spt6Δ2-238_Flag']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='Flag coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,3))
-lala.set(title='rep2')
+lala.set(title='Flag rep2')
+plt.savefig('Flag_rep2_boxplot.svg')
 plt.show();
 
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep3_toplot.melt(value_vars=['Spt6_Flag_DMSO', 'Spt6_Flag', 'Spt6Δ2-238_Flag_DMSO', 'Spt6Δ2-238_Flag']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='Flag coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,3))
-lala.set(title='rep3')
+lala.set(title='Flag rep3')
+plt.savefig('Flag_rep3_boxplot.svg')
 plt.show();
 
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep4_toplot.melt(value_vars=['Spt6_Flag_DMSO', 'Spt6_Flag', 'Spt6Δ2-238_Flag_DMSO', 'Spt6Δ2-238_Flag']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='Flag coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,3))
-lala.set(title='rep4')
+lala.set(title='Flag rep4')
+plt.savefig('Flag_rep4_boxplot.svg')
 plt.show();
 
 # 8WG16
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep2_toplot.melt(value_vars=['Spt6_8WG16_DMSO', 'Spt6_8WG16', 'Spt6Δ2-238_8WG16_DMSO', 'Spt6Δ2-238_8WG16']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='8WG16 coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,4))
-lala.set(title='rep2')
+lala.set(title='Rpb1 rep2')
+plt.savefig('Rpb1_rep2_boxplot.svg')
 plt.show();
 
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep3_toplot.melt(value_vars=['Spt6_8WG16_DMSO', 'Spt6_8WG16', 'Spt6Δ2-238_8WG16_DMSO', 'Spt6Δ2-238_8WG16']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='8WG16 coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,4))
-lala.set(title='rep3')
+lala.set(title='Rpb1 rep3')
+plt.savefig('Rpb1_rep3_boxplot.svg')
 plt.show();
 
 plt.figure(dpi=300)
 lala = sns.boxplot(data=rep4_toplot.melt(value_vars=['Spt6_8WG16_DMSO', 'Spt6_8WG16', 'Spt6Δ2-238_8WG16_DMSO', 'Spt6Δ2-238_8WG16']),
-            x = 'variable', y='value', fliersize=0, linewidth=2, color='green')
+            x = 'variable', y='value', fliersize=0, linewidth=1, color='green')
 lala.set(xlabel=None)
 lala.set(xticklabels=['Spt6\nDMSO','Spt6\nIAA','Spt6Δ2-238\nDMSO','Spt6Δ2-238\nIAA'])
-lala.set(ylabel='8WG16 coverage')
+lala.set(ylabel='occupancy')
 lala.set(ylim=(0,4))
-lala.set(title='rep4')
+lala.set(title='Rpb1 rep4')
+plt.savefig('Rpb1_rep4_boxplot.svg')
 plt.show();
 
 
@@ -1206,35 +1317,45 @@ plt.show();
 
 
     
-### Testing heatmaps  
-# Flag
-rep2_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinput_rep2_si_test_ratio_scale.tab', 
-                 sep='\t', header=3)
-rep3_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinput_rep3_si_test_ratio_scale.tab', 
-                 sep='\t', header=3)
-rep4_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinput_rep4_si_test_ratio_scale.tab', 
-                 sep='\t', header=3)
+# ### Testing heatmaps  
+# # Flag
+# rep2_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinput_rep2_si_test_ratio_scale.tab', 
+#                  sep='\t', header=3)
+# rep3_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinput_rep3_si_test_ratio_scale.tab', 
+#                  sep='\t', header=3)
+# rep4_FvI = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/deeptools/tab/Flagvinput_rep4_si_test_ratio_scale.tab', 
+#                  sep='\t', header=3)
 
 
 
-plt.figure()
-lala = sns.heatmap(rep2_FvI.iloc[:,150:300])
-lala.set(xticklabels=[],yticklabels=[])
-plt.show();
+# plt.figure()
+# lala = sns.heatmap(rep2_FvI.iloc[:,150:300])
+# lala.set(xticklabels=[],yticklabels=[])
+# plt.show();
 
-#Trying to sort genes in descending order of signal
-test = rep2_FvI.iloc[:,150:300]
-test['mean'] = test.mean(1)
+# #Trying to sort genes in descending order of signal
+# test = rep2_FvI.iloc[:,150:300]
+# test['mean'] = test.mean(1)
 
-#sorting, re-indedex
-data = test.sort_values(by=['mean'],axis=0,ascending=False,ignore_index=True)
+# #sorting, re-indedex
+# data = test.sort_values(by=['mean'],axis=0,ascending=False,ignore_index=True)
 
-#remove highest 10% of genes
-data = data.loc[300:,:]
+# #remove highest 10% of genes
+# data = data.loc[300:,:]
 
-plt.figure()
-lala = sns.heatmap(data)
-lala.set(xticklabels=[],yticklabels=[])
+# plt.figure()
+# lala = sns.heatmap(data)
+# lala.set(xticklabels=[],yticklabels=[])
+# plt.show();
+
+
+# plotting correlation
+pearson_corr = pd.read_csv('/Users/jlwarner/Desktop/chip_seq/correlation/pearson.tab', 
+                 sep='\t', header=1)
+
+sns.set_style('ticks')
+sns.clustermap(pearson_corr, xticklabels=True, yticklabels=True, figsize=(15,15))
+plt.savefig('chip_pearson_corr.svg')
 plt.show();
 
     

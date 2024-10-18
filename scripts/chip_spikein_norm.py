@@ -97,7 +97,7 @@ for i in [0,1,2,12,13,14,24,25,26,36,37,38]:
 #     print(i)
 # Checks indices in groups
 #     print(aligned_reads.loc[[i,i+3,i+6,i+9], "library"])
-    aligned_reads.loc[[i,i+3,i+6,i+9], 'alpha_IP'] = 1/(aligned_reads.loc[[i,i+3,i+6,i+9],"spom_counts"]*norm[i+6])
+    aligned_reads.loc[[i,i+3,i+6,i+9], 'alpha_IP'] = (1/(aligned_reads.loc[[i,i+3,i+6,i+9],"spom_counts"]*norm[i+6]))*10000000
 
 ### Testing to make sure that spike-in math was done correctly
 # lala = [0,1,2,12,13,14,24,25,26,36,37,38]
@@ -125,6 +125,6 @@ aligned_reads[['library','alpha_IP_float']]
 aligned_reads[["library", "alpha_IP_float"]].to_csv(path_or_buf='normalization_table.csv', index=False, header=False)
 
 # Test flat multiplier
-aligned_reads["alpha_IP_multiplied"] = aligned_reads['alpha_IP']*10000000
-aligned_reads[["library", "alpha_IP_multiplied"]].to_csv(path_or_buf='test_normalization_table.csv', index=False, header=False)
-
+# aligned_reads["alpha_IP_multiplied"] = aligned_reads['alpha_IP']*10000000
+# aligned_reads[["library", "alpha_IP_multiplied"]].to_csv(path_or_buf='test_normalization_table.csv', index=False, header=False)
+# flat multiplier works -- including in code above.

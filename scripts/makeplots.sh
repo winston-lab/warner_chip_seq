@@ -14,31 +14,31 @@ module load gcc/6.2.0 python/2.7.12 deeptools/3.0.2
 	
 for IP in V5 8WG16 Flag; do
 
-plotHeatmap -m deeptools/log2/si/${IP}vinput_${1%}_si_log2_scale.gz -o deeptools/plots/${IP}vinput_${1%}_si_log2_scale_heatmap.png \
+plotHeatmap -m deeptools/ratio/${IP}vinput_${1%}_si_ratio_scale.gz -o deeptools/plots/${IP}vinput_${1%}_si_ratio_scale_heatmap.png \
 	--dpi 300 \
 	--startLabel "TSS" \
 	--endLabel "TES" \
 	-y "normalized counts" \
-        --plotTitle "${IP} over input log2 ${1%}" \
+        --plotTitle "${IP} over input ${1%}" \
         --heatmapWidth 8 \
 	--averageTypeSummaryPlot mean \
 
-plotHeatmap -m deeptools/log2/si/${IP}vinput_${1%}_si_log2_reference.gz -o deeptools/plots/${IP}vinput_${1%}_si_log2_reference_heatmap.png \
+plotHeatmap -m deeptools/ratio/${IP}vinput_${1%}_si_ratio_reference.gz -o deeptools/plots/${IP}vinput_${1%}_si_ratio_reference_heatmap.png \
 	--dpi 300 \
 	--refPointLabel "TSS" \
 	--sortRegions ascend \
+	--whatToShow "heatmap and colorbar" \
 	--sortUsing region_length \
-	--whatToShow heatmap and colorbar \
 	-y "normalized counts" \
-        --plotTitle "${IP} over input log2 ${1%}" \
+        --plotTitle "${IP} over input ${1%}" \
         --heatmapWidth 8 \
 
-plotProfile -m deeptools/log2/si/${IP}vinput_${1%}_si_log2_scale.gz -o deeptools/plots/${IP}vinput_${1%}_si_log2_scale_profile.png \
+plotProfile -m deeptools/ratio/${IP}vinput_${1%}_si_ratio_scale.gz -o deeptools/plots/${IP}vinput_${1%}_si_ratio_scale_profile.png \
 	--dpi 300 \
 	--plotHeight 12 \
 	--plotWidth 12 \
 	-y "normalized counts" \
-	--plotTitle "${IP} over input log2 ${1%}" \
+	--plotTitle "${IP} over input ${1%}" \
 	--startLabel "TSS" \
 	--endLabel "TES" \
 	--perGroup \
