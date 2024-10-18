@@ -145,13 +145,45 @@ Spike-in normalization math is not intuitive (at least it isn't to me). I have i
 
 Essentially, if we wanted to normalize the experimental input signal between libraries, we could just normalize by library size (number of experimental reads). Scaling by library size does not work for the IPs, however, as getting half as many experimental reads is meaningful (as long as the number of spike-in reads is the same). Therefore, if we use the spike-in reads to "link" the IP and input samples, we can scale each IP to the same scale as the input signal. Then you can calculate the IP enrichment over input, which is exactly what we want to do! (And is what we do in step 8.)
 
-At this point, I transfer these two '_counts.log' files to my computer and use a custom python script that I have written to determine the scaling factors to use for spike-in normalization. I plan to move this script into this repository and edit it so that it can be run on O2 instead of needing to run it locally. This python script may need extensive editing to make it work for your total number of samples, as well as for your number of IPs per input. If you look carefully at the math that is being done, I multiply the calculated scaling factor by 10000000. This is purely to make the resulting coverage numbers human readable: since each scaling factor is multiplied by the same constant, it does not affect the ratios between libraries.
+If you look carefully at the math that is being done, I multiply the calculated scaling factor by 10000000. This is purely to make the resulting coverage numbers human readable: since each scaling factor is multiplied by the same constant, it does not affect the ratios between libraries.
 
-The output of this step is a file called 'normalization_table.csv' that consists of two columns:
+At this point, we need to create a local virtual environment in which to run the custome python script that I've written to generate the normalization values.
+Run the following commands line-by-line:
+
+```
+# start an interactive session
+srun --pty -p interactive -t 0-1:00 --mem=1G bash
+
+# load modules
+module load gcc/9.2.0
+
+module load python/3.10.11
+
+# create a local virtual environment
+virtualenv spike_in --system-site-packages
+
+# activate the virtual environment
+source spike_in/bin/activate
+
+# install packages to the virtual environment
+pip3 install numpy
+
+pip3 install pandas
+
+pip3 install matplotlib
+
+# run the python script
+python scripts/chip_spikein_norm.py
+
+
+# deactivate the environment
+deactivate
+```
+
+The output of all of this is a file called 'normalization_table.csv' in `logs/` that consists of two columns:
 - column 1 is the library name
 - column 2 is the scaling factor that will be used for normalization
 
-Currently, after this CSV is generated, I manually transfer it back to O2 and place it in the `logs/` directory. Running the script locally on O2 will also make this second transfer unnecessary.
 
 ```bash
 # take a peek at the file

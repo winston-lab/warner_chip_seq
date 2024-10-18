@@ -6,14 +6,14 @@ Created on Wed Oct  2 13:25:03 2024
 @author: jlwarner
 """
 
-import os
-os.chdir('/Users/jlwarner/Desktop/chip_seq/logs')
+# import os
+# os.chdir('/Users/jlwarner/Desktop/chip_seq/logs')
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 # Gives number of lines in log file
-with open(r"experimental_counts.log", 'r') as fp:
+with open(r"logs/experimental_counts.log", 'r') as fp:
     lala = len(fp.readlines())
     print(lala)
 fp.close()
@@ -25,13 +25,13 @@ scer_counts = []
 spom_counts =[]
 # Change seconds number in range() to equal to the number of lines in the log files.
 for i in range(0, lala, 2):
-    file = open('experimental_counts.log', 
+    file = open('logs/experimental_counts.log', 
                 mode='r')
     content = file.readlines()
     libraries.append(content[i].strip('\n'))
     scer_counts.append(int(content[i+1].strip('\n')))
     file.close()
-    file = open('spikein_counts.log', 
+    file = open('logs/spikein_counts.log', 
                 mode='r')
     content = file.readlines()
     spom_counts.append(int(content[i+1].strip('\n')))
@@ -122,7 +122,9 @@ aligned_reads[['library','alpha_IP_float']]
 
 
 # Run below command to export
-aligned_reads[["library", "alpha_IP_float"]].to_csv(path_or_buf='normalization_table.csv', index=False, header=False)
+aligned_reads[["library", "alpha_IP_float"]].to_csv(path_or_buf='logs/normalization_table.csv', index=False, header=False)
+
+print('Done!')
 
 # Test flat multiplier
 # aligned_reads["alpha_IP_multiplied"] = aligned_reads['alpha_IP']*10000000
