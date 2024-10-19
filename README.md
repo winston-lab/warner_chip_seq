@@ -57,9 +57,24 @@ All Slurm submission scripts have a header that tells Slurm the parameters of th
 
 This job uses the 'short' partition, requests 4 cores, has a maximum runtime of 3 hours, requests 2 GB in memory, writes two additonal files (<JOB_ID>.out and <JOB_ID>.err) in the base directory that are useful for troubleshooting if jobs fail, and sends update emails on the jobs to the email address provided. I highly suggest you put your email in here so that you get pinged when jobs complete.
 
+To edit:
+
+```
+vim scripts/<script_name_here.sh>
+
+# press 'a' to enter -INSERT- mode
+# navigate to the area to edit and make your edits
+# press 'esc' to exit -INSERT- mode
+# type ':wq' (you should see this in the bottom left) to save (w) and quit (q)
+
+# if you mistype something and want to quit without saving, type ':q!'
+```
+
 For more information on Slurm, [see here](https://harvardmed.atlassian.net/wiki/spaces/O2/pages/1586793632/Using+Slurm+Basic).
 
+
 **2. Download or transfer your .fastq.gz files into the `fastq/` directory.**
+
 
 **3. Align your libraries to the experimental and spike-in genomes.**
 
@@ -96,6 +111,7 @@ vim logs/<FILE_NAME>_bowtie2.txt
 ```
 
 We will use the 'sorted.bam' and 'sorted.bam.bai' files in subsequent steps. I don't think that the 'unsorted.bam' files need to be saved, but I have not made a habit of deleting them.
+
 
 **4. Determine the distribution of insert sizes in your ChIP samples.**
 
@@ -139,11 +155,14 @@ This scripts creates two files in the `logs/` directory: 'experimental_counts.lo
 - the second line is the number of paired reads that are mapped to the respective genome in each 'sorted.bam' file
 The lines continue to alternate for each BAM file processed.
 
+
 **6. Do spike-in normalization math.**
 
 Spike-in normalization math is not intuitive (at least it isn't to me). I have included a PDF ('chip_spikeins.pdf') in this repository that was written by James Chuang and explains all of the logic and algebra behind this step. In short, the 'input' libraries allow us to empirically determine the proportion of experimental to spike-in material that went into each IP. 
 
 Essentially, if we wanted to normalize the experimental input signal between libraries, we could just normalize by library size (number of experimental reads). Scaling by library size does not work for the IPs, however, as getting half as many experimental reads is meaningful (as long as the number of spike-in reads is the same). Therefore, if we use the spike-in reads to "link" the IP and input samples, we can scale each IP to the same scale as the input signal. Then you can calculate the IP enrichment over input, which is exactly what we want to do! (And is what we do in step 8.)
+
+For the python script in this step to work for any data sets other than the ones used in my ChIP experiment, you will probably need to change indexing the for loop in lines 97-98. I haven't been able to figure out how to make the indexing step run autonomously, and so you need to figure out the indexing math to line up your IP samples with the appropriate inputs.
 
 If you look carefully at the math that is being done, I multiply the calculated scaling factor by 10000000. This is purely to make the resulting coverage numbers human readable: since each scaling factor is multiplied by the same constant, it does not affect the ratios between libraries.
 
@@ -175,20 +194,23 @@ pip3 install matplotlib
 # run the python script
 python scripts/chip_spikein_norm.py
 
-
 # deactivate the environment
 deactivate
 ```
+
+(More on virtual environments on O2 [here](https://harvardmed.atlassian.net/wiki/spaces/O2/pages/1588662166/Personal+Python+Packages).)
 
 The output of all of this is a file called 'normalization_table.csv' in `logs/` that consists of two columns:
 - column 1 is the library name
 - column 2 is the scaling factor that will be used for normalization
 
-
 ```bash
 # take a peek at the file
 vim logs/normalization_table.csv
 ```
+
+This step also generates a plot of the proportion of each library that aligned to either the *S. pombe* or *S. cerevisiae* genome. It's called 'read_proportions.png' and can also be found in `logs/`.
+
 
 **7. Generate coverage tracks for each library scaled by spike-in normalization.**
 
@@ -232,6 +254,7 @@ This step outputs BIGWIG (.bw) files.
 ls deeptools/si/
 ```
 
+
 **8. Calculate correlation of ChIP coverage -- work in progress, you can safely skip this step**
 
 Entire genome minus chrM, binsize 200, using `multiBigwigSummary`, all replicates, need to figrue out how to remove 'input' samples.
@@ -264,6 +287,7 @@ for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_reference.sh $rep; do
 
 There should now be new .gz files in the `deeptools/ratio` directory that will be used in the next step to plot the results. The uncompressed matrices are also saved in `deeptools/ratio/tab` in tab delimeted format so that you can import them into python and plot the data manually.
 
+
 **11. Plot data.**
 
 ```bash
@@ -273,11 +297,12 @@ for rep in rep2 rep3 rep4; do sbatch scripts/makeplots.sh $rep; done
 
 Plots are found in the `deeptools/plots` directory.
 
-**To transfer data:**
+
+**To transfer data from O2 to your computer:**
 
 ```bash
 # from a terminal session that is not logged in to O2
-scp -r <YOUR_HMSID>@rc.transfer.hms.harvard.edu:/n/groups/winston/<your/file_path/here> <destination/file_path/here>
+scp -r <YOUR_HMSID>@transfer.rc.hms.harvard.edu:/n/groups/winston/<your/file_path/here> <destination/file_path/here>
 ```
 
 
