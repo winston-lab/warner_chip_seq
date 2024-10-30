@@ -166,7 +166,7 @@ For the python script in this step to work for any data sets other than the ones
 
 If you look carefully at the math that is being done, I multiply the calculated scaling factor by 10000000. This is purely to make the resulting coverage numbers human readable: since each scaling factor is multiplied by the same constant, it does not affect the ratios between libraries.
 
-At this point, we need to create a local virtual environment in which to run the custome python script that I've written to generate the normalization values.
+At this point, we need to create a local virtual environment in which to run the custom python script that I've written to generate the normalization values.
 Run the following commands line-by-line:
 
 ```
@@ -209,7 +209,7 @@ The output of all of this is a file called 'normalization_table.csv' in `logs/` 
 vim logs/normalization_table.csv
 ```
 
-This step also generates a plot of the proportion of each library that aligned to either the *S. pombe* or *S. cerevisiae* genome. It's called 'read_proportions.png' and can also be found in `logs/`.
+This step also generates a plot of the proportion of each library that aligned to either the *S. pombe* or *S. cerevisiae* genome. It's called 'proportion_reads_mapped.png' and can also be found in `logs/`.
 
 
 **7. Generate coverage tracks for each library scaled by spike-in normalization.**
