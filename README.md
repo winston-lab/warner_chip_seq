@@ -34,13 +34,13 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 
 ```bash
 # clone the repository
-git clone https://github.com/jamwarner/chip_seq.git
+git clone https://github.com/winston-lab/warner_chip_seq.git
 
 # navigate to the newly created directory
-cd chip_seq
+cd warner_chip_seq
 ```
 
-Run all commands from the base `chip_seq` directory.
+Run all commands from the base `warner_chip_seq` directory.
 
 All Slurm submission scripts have a header that tells Slurm the parameters of the job.  It looks like this:
 
