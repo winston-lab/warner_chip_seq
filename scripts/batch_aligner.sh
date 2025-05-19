@@ -26,3 +26,4 @@ bowtie2 --no-unal \
 samtools sort bam/${base}_unsorted.bam -o bam/${base}_sorted.bam
 
 samtools index bam/${base}_sorted.bam
+

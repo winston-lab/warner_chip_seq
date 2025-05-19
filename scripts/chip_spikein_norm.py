@@ -94,8 +94,8 @@ norm = aligned_reads.loc[aligned_reads["library"].str.contains('input')]["scer_c
 ### To do in a for loop
 # The list to interate through is determined by the order of you libraries in the data frame.
 # You'll have to look at their indices and edit the list accordingly.
-for i in [0,1,2,12,13,14,24,25,26,36,37,38]:
-    aligned_reads.loc[[i,i+3,i+6,i+9], 'alpha_IP'] = (1/(aligned_reads.loc[[i,i+3,i+6,i+9],"spom_counts"]*norm[i+6]))*10000000
+for i in [0,1,6,7,12,13,18,19,24,25,30,31,36,37,42,43]:
+    aligned_reads.loc[[i,i+2,i+4], 'alpha_IP'] = (1/(aligned_reads.loc[[i,i+2,i+4],"spom_counts"]*norm[i+2]))*10000000
 
 ### Testing to make sure that spike-in math was done correctly
 # lala = [0,1,2,12,13,14,24,25,26,36,37,38]
