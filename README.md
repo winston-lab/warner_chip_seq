@@ -39,7 +39,6 @@ git clone https://github.com/winston-lab/warner_chip_seq.git
 # navigate to the newly created directory
 cd warner_chip_seq
 ```
-
 Run all commands from the base `warner_chip_seq/` directory.
 
 All Slurm submission scripts have a header that tells Slurm the parameters of the job.  It looks like this:
