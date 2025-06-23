@@ -71,9 +71,12 @@ aligned_reads[["library", "proportion_spom", "proportion_scer"]].plot(
     stacked = True,
     figsize = (5,10),
     legend = True,
-    title = 'Proportion of reads mapped to S. pombe \nor S. cerevisiae genomes',
+    title = 'Proportion of reads mapped to\n$\\it{S. pombe}$ or $\\it{S. cerevisiae}$ genomes',
     )
-plt.savefig('logs/proportion_reads_mapped.png', dpi=300)
+plt.gca().invert_yaxis()
+plt.tight_layout()
+#plt.savefig('logs/proportion_reads_mapped.png', dpi=300)
+plt.show();
 
 ### Math from James Chuang's ChIP-seq spike in notes:
 #   exp = Scer
