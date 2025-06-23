@@ -10,7 +10,9 @@
 #SBATCH --mail-user=<YOUR_EMAIL_HERE>         # Email to which notifications will be sent
 
 
-module load gcc/9.2.0 python/3.9.14 deeptools/3.5.0
+module load gcc/9.2.0 python/3.10.11
+
+source env/deeptools/bin/activate
 
 base=$(basename ${1%} _sorted.bam)
 
@@ -24,3 +26,6 @@ bamCoverage -b ${1%} -o deeptools/si/${base}_midpoints_si.bw \
         -p max \
         --smoothLength 60 \
         --ignoreForNormalization chrM \
+
+
+deactivate

@@ -34,13 +34,13 @@ An analysis pipeline for paired-end ChIP-seq data with the following major steps
 
 ```bash
 # clone the repository
-git clone https://github.com/jamwarner/chip_seq.git
+git clone https://github.com/winston-lab/warner_chip_seq.git
 
 # navigate to the newly created directory
-cd chip_seq
+cd warner_chip_seq
 ```
 
-Run all commands from the base `chip_seq` directory.
+Run all commands from the base `warner_chip_seq/` directory.
 
 All Slurm submission scripts have a header that tells Slurm the parameters of the job.  It looks like this:
 
@@ -72,19 +72,77 @@ vim scripts/<script_name_here.sh>
 
 For more information on Slurm, [see here](https://harvardmed.atlassian.net/wiki/spaces/O2/pages/1586793632/Using+Slurm+Basic).
 
+**2. Prepare virtual environments.**
 
-**2. Download or transfer your .fastq.gz files into the `fastq/` directory.**
+The code written for these analyses relies on two virtual environments `deeptools` and `spike_in` that you will have to set up using `virtualenv` and `pip`. The following commands should be run line-by-line.
+(More on virtual environments on O2 [here](https://harvardmed.atlassian.net/wiki/spaces/O2/pages/1588662166/Personal+Python+Packages).)
+
+```bash
+# start an interactive session
+srun --pty -p interactive -t 0-1:00 --mem=1G bash
+```
+
+To create the `deeptools` environment:
+```bash
+# load modules
+module load gcc/9.2.0
+
+module load python/3.10.11
+
+# create a local virtual environment
+virtualenv env/deeptools --system-site-packages
+
+# activate the virtual environment
+source env/deeptools/bin/activate
+
+# install packages to the virtual environment
+pip3 install deepTools
+
+#deactivate the environment
+source deactivate
+```
+
+To create the `spike_in` environment:
+```bash
+# create a local virtual environment
+virtualenv env/spike_in --system-site-packages
+
+# activate the virtual environment
+source env/spike_in/bin/activate
+
+# install packages to the virtual environment
+pip3 install numpy
+
+pip3 install pandas
+
+pip3 install matplotlib
+
+#deactivate the environment
+source deactivate
+```
+
+There should now be two folders, one for each environment, in the `env/` directory.
+
+**3. Download or transfer your .fastq.gz files into the `fastq/` directory.**
 
 
-**3. Align your libraries to the experimental and spike-in genomes.**
+**4. Align your libraries to the experimental and spike-in genomes.**
 
 We will submit two alignment jobs for each library: one to the experimental genome and the othe to the spike-in genome. Submitting the jobs separately allows all of the alignments to run in parallel.
 
+You will have to edit the `dir` variable in `scripts/batch_aligner_new.sh` and `scripts/spike_batch_aligner_new.sh` to point towards the directory containing your fastq files.
+
 ```bash
 # use a for loop to submit alignments for each set of paired reads separately
-for name in fastq/*R1_001.fastq.gz; do sbatch scripts/batch_aligner.sh $name; done
-for name in fastq/*R1_001.fastq.gz; do sbatch scripts/spike_batch_aligner.sh $name; done
+for name in fastq/*R1_001.fastq.gz; do sbatch scripts/batch_aligner_new.sh $name; done
+for name in fastq/*R1_001.fastq.gz; do sbatch scripts/spike_batch_aligner_new.sh $name; done
 ```
+
+Alignment is done using [`bowtie2`](https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) using the following options:
+- `--sensitive`
+- `--no-unal`
+- `--no-mixed`
+- `--no-discordant`
 
 This will generate two sets (experimental and spike-in) of three files for each library:
 - in `bam/`
@@ -110,10 +168,13 @@ Also generated is a summary of each alignment in the `logs/` directory:
 vim logs/<FILE_NAME>_bowtie2.txt
 ```
 
-We will use the 'sorted.bam' and 'sorted.bam.bai' files in subsequent steps. I don't think that the 'unsorted.bam' files need to be saved, but I have not made a habit of deleting them.
+We will use the 'sorted.bam' and 'sorted.bam.bai' files in subsequent steps. The 'unsorted.bam' files can be safely deleted.
+```bash
+rm bam/*unsorted*
+rm bam/spike_in/*unsorted*
+```
 
-
-**4. Determine the distribution of insert sizes in your ChIP samples.**
+**5. Determine the distribution of insert sizes in your ChIP samples.**
 
 Since the reads are paired, we can determine the size of each fragment that was sequenced from its two ends.
 
@@ -128,7 +189,7 @@ This script will look at all of the 'sorted.bam' files and will generate two new
 
 These files will be generated for the experimental and spike_in alignments separately.
 
-**5. Count aligned reads for experimental and spike-in genomes.**
+**6. Count aligned reads for experimental and spike-in genomes.**
 
 This step uses [samtools view](http://www.htslib.org/doc/samtools-view.html) to count the number of reads in each 'sorted.bam' file. 
 - `-c` makes `samtools` output only the count and not the reads themselves
@@ -156,7 +217,7 @@ This scripts creates two files in the `logs/` directory: 'experimental_counts.lo
 The lines continue to alternate for each BAM file processed.
 
 
-**6. Do spike-in normalization math.**
+**7. Do spike-in normalization math.**
 
 Spike-in normalization math is not intuitive (at least it isn't to me). I have included a PDF ('chip_spikeins.pdf') in this repository that was written by James Chuang and explains all of the logic and algebra behind this step. In short, the 'input' libraries allow us to empirically determine the proportion of experimental to spike-in material that went into each IP. 
 
@@ -166,11 +227,10 @@ For the python script in this step to work for any data sets other than the ones
 
 If you look carefully at the math that is being done, I multiply the calculated scaling factor by 10000000. This is purely to make the resulting coverage numbers human readable: since each scaling factor is multiplied by the same constant, it does not affect the ratios between libraries.
 
-At this point, we need to create a local virtual environment in which to run the custom python script that I've written to generate the normalization values.
 Run the following commands line-by-line:
 
-```
-# start an interactive session
+```bash
+# start an interactive session (if not already interactive)
 srun --pty -p interactive -t 0-1:00 --mem=1G bash
 
 # load modules
@@ -178,21 +238,11 @@ module load gcc/9.2.0
 
 module load python/3.10.11
 
-# create a local virtual environment
-virtualenv spike_in --system-site-packages
-
 # activate the virtual environment
-source spike_in/bin/activate
-
-# install packages to the virtual environment
-pip3 install numpy
-
-pip3 install pandas
-
-pip3 install matplotlib
+source env/spike_in/bin/activate
 
 # run the python script
-python scripts/chip_spikein_norm.py
+python scripts/mnase_spikein_norm.py
 
 # deactivate the environment
 deactivate
@@ -212,7 +262,7 @@ vim logs/normalization_table.csv
 This step also generates a plot of the proportion of each library that aligned to either the *S. pombe* or *S. cerevisiae* genome. It's called 'proportion_reads_mapped.png' and can also be found in `logs/`.
 
 
-**7. Generate coverage tracks for each library scaled by spike-in normalization.**
+**8. Generate coverage tracks for each library scaled by spike-in normalization.**
 
 Before we can calculate IP enrichment over input, we have to generate coverage tracks. We can use the scaling factors that we calculated in the previous step to normalize the coverage tracks at this stage.
 
@@ -233,8 +283,9 @@ The rest of the script just plugs 'alpha' in as the scaling factor to `bamCovera
 > ```bash
 > bamCoverage -b ${1%} -o deeptools/si/${base}_si.bw \
 >        -bs 20 \
->	--scaleFactor ${alpha} \
+>        --scaleFactor ${alpha} \
 >        --extendReads \
+>        --centerReads \
 >        -p max \
 >        --smoothLength 60 \
 >        --ignoreForNormalization chrM \
@@ -255,54 +306,66 @@ ls deeptools/si/
 ```
 
 
-**8. Calculate correlation of ChIP coverage -- work in progress, you can safely skip this step**
+**9. Calculate and plot correlation scores.**
 
-Entire genome minus chrM, binsize 200, using `multiBigwigSummary`, all replicates, need to figrue out how to remove 'input' samples.
+```bash
+sbatch scripts/multiBigwigSummary_Correlation.sh
+```
 
-Plot results using `plotCorrelation`, also generate tabular files (.tab) that can be imported into python locally for better heatmap plotting control.
+This script calculates coverage scores in non-overlapping 200 bp bins genome-wide (skipping the mitochondrial genome).
 
+The binned coverage scores are used to calculate Spearman correlation coeeficients between all libraries. The results are plotted as a heatmap in the `correlation/plots` directory. It also outputs the results in tabular (.tab) format in the `correlation/tab` directory if you would like to plot it yourself. Sample code to plot for yourself in python is provided as `scripts/plot_correlation.py`.
 
+**10. Average biological replicates to generate coverage tracks.**
 
-**9. Calculate enrichment of IP/input coverage**
+If the correlation between biological replicates looks good, you can average your coverage tracks before plotting your results.
+
+```bash
+# calculate average coverage across all replicates in 10 bp windows
+sbatch scripts/average_bigwigAverage.sh
+```
+
+The averaged files (.bw) can be found in `deeptools/averaged/`. These files can be loaded by IGV to visualize nucleosome dyad coverage at individual loci.
+
+**11. Calculate enrichment of IP/input coverage.**
 
 This step calculates the ratio of IP to input for each bin.
 
 ```bash
-# use a for loop to submit each replicate in parallel
-for rep in rep2 rep3 rep4; do sbatch scripts/bigwigCompare_chip.sh $rep; done
+sbatch scripts/average_bigwigCompare_chip.sh
 ```
 
-There should now be new .bw files in the `deeptools/ratio` directory with `<IP>vinput_<rep>_si_ratio.bw` style names. These show the enrichment of IP coverage over input coverage.
+There should now be new .bw files in the `deeptools/averaged/ratio` directory with `<IP>vinput_averaged_midpoints_si_ratio.bw` style names. These show the enrichment of IP coverage over input coverage.
+Also generated are .bw files in the `deeptools/averaged/perpol` directory with `<IP>v8WG16_averaged_midpoints_si_ratio.bw` style names. These show the Rpb1-normalized enrichment of IP coverage.
 
-
-**10. Generate matrices to plot data.**
+**12. Generate matrices to plot data.**
 
 Using these new enrichment files, generate matrices with which to plot the data.
 
 ```bash
-# use a for loop to submit each replicate in parallel
-for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_scale.sh $rep; done
-for rep in rep2 rep3 rep4; do sbatch scripts/computeMatrix_reference.sh $rep; done
+# Sorted by Rpb1 ChIP-seq occupancy in wild-type, with all genes are scaled to the same length. Plotting data is generated for 250 bp upstream of the TSS and 250 bp downstream of the CPS.
+sbatch average_computeMatrix_midpoints_scale.sh
+
+# Sorted by gene length. Plotting data is generated for 250 bp upstream and up to 4500 bp downstream. Positions after the end of the gene are filled with nan.
+sbatch average_computeMatrix_midpoitns_reference.sh
 ```
 
-There should now be new .gz files in the `deeptools/ratio` directory that will be used in the next step to plot the results. The uncompressed matrices are also saved in `deeptools/ratio/tab` in tab delimeted format so that you can import them into python and plot the data manually.
+There should now be new .tab files in the `deeptools/averaged/<ratio OR perpol>/tab` directory that will be used in the next step to plot the results. The compressed matrices are also saved in `deeptools/averaged/<ratio OR perpol>/gz` if you would like to use deeptools to generate plots.
 
 
-**11. Plot data.**
+**13. Import and plot data.**
 
+The .tab files can be used to plot the results in python. I do this by moving the files to my local machine, though you could certainly also try to do the plotting on O2. Sample codes to plot for yourself in python are provided as `scripts/plot_chip_<ETC>.py`.
+
+To transfer .tab files to your machine:
 ```bash
-# use a for loop to submit each replicate in parallel
-for rep in rep2 rep3 rep4; do sbatch scripts/makeplots.sh $rep; done
+# from a local session
+scp -r <YOUR_USER_ID>@transfer.rc.hms.harvard.edu <PATH/TO/DIR/>deeptools/averaged/ratio/tab <./PATH/TO/LOCAL/DIR>
+scp -r <YOUR_USER_ID>@transfer.rc.hms.harvard.edu <PATH/TO/DIR/>deeptools/averaged/perpol/tab <./PATH/TO/LOCAL/DIR>
 ```
-
-Plots are found in the `deeptools/plots` directory.
-
-
-**To transfer data from O2 to your computer:**
-
+To fix the first few lines of the files and make them python-readable, run the following code (provided as `scripts/tab_converter.sh` on the directory containing the .tab files:
 ```bash
-# from a terminal session that is not logged in to O2
-scp -r <YOUR_HMSID>@transfer.rc.hms.harvard.edu:/n/groups/winston/<your/file_path/here> <destination/file_path/here>
+for name in <FILE/PTAH/>*.tab; do sed '3s/genes:3087\t/#genes:\n/g' $name > lala.tab && mv lala.tab $name; done
 ```
 
 
