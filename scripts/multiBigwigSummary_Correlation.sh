@@ -10,14 +10,32 @@
 #SBATCH --mail-user=<YOUR_EMAIL_HERE>          # Email to which notifications will be sent
 
 
-module load gcc/9.2.0 python/3.9.14 deeptools/3.5.0
+module load gcc/9.2.0 python/3.10.11
 
-multiBigwigSummary bins -b deeptools/si/*_si.bw \
-	-o correlation/scores_per_bin.gz \
+source env/deeptools/bin/activate
+
+for IP in Flag V5 8WG16 input; do
+
+multiBigwigSummary bins -b deeptools/si/*${IP}*_si.bw \
+	-o correlation/gz/${IP}_scores_per_bin.gz \
 	--smartLabels \
 	-bs 200 \
 	-p max \
 	--chromosomesToSkip chrM \
+
+plotCorrelation -in correlation/gz/${IP}_scores_per_bin.gz \
+	-c spearman \
+	-p heatmap \
+	-o correlation/plots/${IP}_spearman.png \
+	--skipZeros \
+	--plotNumbers \
+	--outFileCorMatrix correlation/tab/${IP}_spearman.tab
+
+done
+
+
+deactivate
+
 
 
 # Add following argument if you want a table of raw scores:
